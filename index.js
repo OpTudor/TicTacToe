@@ -1,11 +1,12 @@
-function Player(sign) {
-  this.sign = sign;
+const label = document.querySelector("label");
+const display = document.getElementById("turn");
+const Player = (sign) => {
   const getSign = () => {
     return sign;
   };
 
   return { getSign };
-}
+};
 
 const gameBoard = (() => {
   const board = ["", "", "", "", "", "", "", "", ""];
@@ -29,6 +30,12 @@ const gameBoard = (() => {
 
 const displayController = (() => {
   const fields = document.querySelectorAll(".field");
+  const restartButton = document.getElementById("restartButton");
+  const updateGameBoard = () => {
+    for (let i = 0; i < fields.length; i++) {
+      fields[i].textContent = gameBoard.getField(i);
+    }
+  };
   fields.forEach((field) => {
     field.addEventListener("click", (e) => {
       if (e.target.textContent === "") {
@@ -36,12 +43,12 @@ const displayController = (() => {
         updateGameBoard();
       }
     });
-
-    const updateGameBoard = () => {
-      for (let i = 0; i < fields.length; i++) {
-        fields[i].textContent = gameBoard.getField(i);
-      }
-    };
+  });
+  restartButton.addEventListener("click", () => {
+    gameBoard.resetBoard();
+    updateGameBoard();
+    label.textContent = "Next up:";
+    display.textContent = "X";
   });
 })();
 
@@ -49,27 +56,35 @@ const gameController = (() => {
   const playerX = Player("X");
   const player0 = Player("0");
   let moves = 0;
-
   const playRound = (index) => {
-    console.log(moves);
-
     gameBoard.setField(index, getCurrentPlayer());
     moves++;
+    upNext();
     const winner = checkWinner();
     if (winner) {
-      alert(`${winner} wins!`);
-      gameBoard.resetBoard();
+      label.textContent = "Winner is:";
+      getWinner();
       moves = 0;
     }
     if (moves === 9) {
-      alert("Draw");
-      gameBoard.resetBoard();
+      label.textContent = "Winner is:";
+      display.textContent = "Nobody";
       moves = 0;
     }
   };
 
   const getCurrentPlayer = () => {
     return moves % 2 === 0 ? playerX.getSign() : player0.getSign();
+  };
+
+  const getWinner = () => {
+    sign = moves % 2 === 1 ? playerX.getSign() : player0.getSign();
+    console.log(sign);
+    display.textContent = sign;
+  };
+
+  const upNext = () => {
+    display.textContent = getCurrentPlayer();
   };
 
   const checkWinner = () => {
