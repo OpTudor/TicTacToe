@@ -38,7 +38,10 @@ const displayController = (() => {
   };
   fields.forEach((field) => {
     field.addEventListener("click", (e) => {
-      if (e.target.textContent === "") {
+      if (
+        e.target.textContent === "" &&
+        gameController.checkWinner() === null
+      ) {
         gameController.playRound(e.target.dataset.index);
         updateGameBoard();
       }
@@ -79,7 +82,6 @@ const gameController = (() => {
 
   const getWinner = () => {
     sign = moves % 2 === 1 ? playerX.getSign() : player0.getSign();
-    console.log(sign);
     display.textContent = sign;
   };
 
@@ -111,5 +113,5 @@ const gameController = (() => {
     return null;
   };
 
-  return { playRound };
+  return { playRound, checkWinner };
 })();
